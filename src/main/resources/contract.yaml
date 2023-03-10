@@ -1,0 +1,1088 @@
+openapi: 3.0.3
+info:
+  title: ContratoCarrito REST - OpenAPI 3.0
+  description: |-
+      Descripcion de mi espicificacion REST.....     
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: batubasilio@hotmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://localhost:8081/api/v1
+tags:
+  - name: backOffice
+    description: backoffice endpoints
+  - name: user
+    description: Operaciones de usuarios
+  - name: producto
+    description: Operacion sobre los productos
+  - name: auth
+    description: operation de autenticacion
+  - name: venta
+    description: Alta de una venta, al simular una venta electronica no poseera una alta y modificacion
+  - name: marca
+    description: ABM de una marca
+  - name: categoria
+    description: ABM de una categoria
+
+    
+
+paths:
+
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+      responses:
+        '200':
+          description: operacion exitosa, creacion de un usuario
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UserDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                  
+  /user/getAllUsers:
+    get:
+      tags: 
+        - user
+      summary: retornar lista de usuarios
+      description: This can only be done by the logged in user.
+      operationId: retorname todo los usuarios
+  
+      responses:
+        default:
+          description: operacion exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserListDTO'   
+                
+  /user/user/{userId}:
+    put:
+      tags:
+        - user
+      security: 
+        - bearerAuth: ['admin']
+      summary: actualizacion de usuario
+      description: actualizar usuario, pero se necesita la autenticacion
+      operationId: updateUser
+      parameters: 
+        - name: userId
+          in: path
+          description: el id del usuario
+          required: true
+          schema: 
+            type: integer
+            format: int64
+      requestBody:
+        description: objeto de tipo usuario a actualizar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        '200':
+          description: operacion exitosa, usuario modificado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    get:
+      tags: 
+        - user
+      security: 
+        - bearerAuth: ['admin']
+      summary: 'recuperacion de usuario'
+      description: para la recuperacion de un usuario se necesita estar autorizado
+      operationId: recuperarUsuario
+      parameters: 
+        - name: userId
+          in: path
+          description: el id del usuario
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: operacion completada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+    delete:
+      tags:
+        - user
+      security:
+        - bearerAuth: ['admin']
+      summary: eliminar usuario
+      description: para eliminar un usuario es requerido la authentificacion
+      operationId: deleteUser
+      parameters: 
+        - name: userId
+          in: path
+          description: the user id
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OPERACION EXITOSA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+              
+  /auth/refresh:
+    patch:
+      tags: 
+        - auth
+      security: 
+        - bearerAuth: []
+      summary: actualizar token
+      description: actualizar token, se necesita la autenticacion del usuario
+      operationId: actualizarToken
+      parameters: 
+        - name: Authorization
+          in: header
+          description: autentication de token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: operacion comletada correctamente
+          headers:
+            Access-Token:
+              schema:
+                type: string
+            Refresh-Token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTResponseDTO'
+            
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: crear la session de un usuario
+      description: crear una session de un usuario
+      operationId: login
+      parameters: 
+        - name: nombreUsuario
+          in: query
+          description: el nombre de usuario para la autenticacion 
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+            format: password
+      responses:
+        200:
+          description: operacion completada
+          headers:
+            Access-Token:
+              schema:
+                type: string
+            Refresh-Token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginDTO'
+                
+  /producto/producto:
+    post:
+      tags: 
+        - producto
+      security:
+        - bearerAuth: ['admin']
+      summary: add new product
+      description: add new product while the user is legged in
+      operationId: addProduct
+      requestBody:
+        description: created new product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoDTO'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ProductoDTO'
+      responses:
+        default:
+          description: successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProductoDTO'
+    get:
+      tags: 
+        - producto
+      summary: dame todos los prodcutos
+      description: retornarme el listado de productos, solo si el usuario se encuentra actualmente logeado
+      operationId: getAllProduct
+      responses:
+        default:
+            description: operacion exitosa
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ProductoDTO'
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/ProductoDTO' 
+                  
+  /producto/producto/{productoId}:
+    get:
+      tags:
+        - producto
+      security:
+      - bearerAuth: []
+      summary: dame el producto especificado por su id
+      description: retorname el listado de productos, solo si el usuario se encuentra logeado
+      operationId: getProductById
+      parameters: 
+        - name: productoId
+          in: path
+          description: el id del producto
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: retorna un producto especifico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoListDTO'
+    put:
+      tags:
+        - producto
+      security: 
+        - bearerAuth: ['admin']
+      summary: actualizacion de un producto
+      description: actualizar el producto, pero se necesita la autenticacion
+      operationId: updateProduct
+      parameters: 
+        - name: productoId
+          in: path
+          description: el id del producto
+          required: true
+          schema: 
+            type: integer
+            format: int64
+      requestBody:
+        description: objeto de tipo producto a actualizar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoDTO'
+      responses:
+        '200':
+          description: operacion exitosa, producto modificado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+    delete:
+      tags:
+        - producto
+      security:
+        - bearerAuth: ['admin']
+      summary: eliminar producto
+      description: para eliminar un producto es condicion necesario que este logeado y que sea un administrador
+      operationId: deleteProducto
+      parameters: 
+        - name: productoId
+          in: path
+          description: el id del producto
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OPERACION EXITOSA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+  /producto/producto/{marcaId}:
+    get:
+      tags:
+        - producto
+      security:
+      - bearerAuth: []
+      summary: dame el producto especificado por la marca
+      description: retorname el listado de productos, solo si el usuario se encuentra logeado
+      operationId: getProductByMarcaId
+      parameters: 
+        - name: marcaId
+          in: path
+          description: el id de la marca
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: retorna un listado de productos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoListDTO'        
+                
+  /venta/venta:
+    post:
+      tags: 
+        - venta
+      security:
+        - bearerAuth: ['admin']
+      summary: nueva venta
+      description: se podra realizar una venta/compra solo si el usuario se encuentra loggeado
+      operationId: addVenta
+      requestBody:
+        description: crear una nueva venta
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VentaDTO'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/VentaDTO'
+      responses:
+        default:
+          description: successfull operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VentaDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/VentaDTO'
+                
+  /venta/getAllVentas:
+    get:
+      tags:
+        - venta
+      security:
+      - bearerAuth: ['admin']
+      summary: dame todas la ventas
+      description: retorname el listado de ventas, si se cumple la condicion que loggeo en modo admin
+      operationId: getAllVentas
+      responses:
+        default:
+          description: retorna todas las ventas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VentaListDTO'
+                
+  /venta/{idCliente}/getAllVentas:
+    get:
+      tags:
+        - venta
+      security:
+        - bearerAuth: ['admin']
+      summary: dame todas las ventas de este usuario
+      description: retorname el listado de ventas especifico de ese usaurio
+      operationId: getAllVentasById
+      parameters: 
+        - name: idCliente
+          in: path
+          description: el id del cliente
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: operacion completada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VentaDTO'
+                
+  /venta/venta/{ventaId}/detalle:
+    put:
+      tags:
+        - venta
+      security: 
+        - bearerAuth: []
+      summary: agregado del detalle
+      description: agregar productos a la venta, se solicita estar loggeado
+      operationId: addDetalle
+      parameters: 
+        - name: ventaId
+          in: path
+          description: el id de la venta
+          schema:
+            type: integer
+      requestBody:
+        description: el detalle fue agregado
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetalleDTO'
+      responses:
+        '200':
+          description: operacion completa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VentaDTO'
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags:
+        - venta
+      security: 
+        - bearerAuth: []
+      summary: Remover el producto de la venta, antes de que esta se concrete
+      description: solo se podra eliminar el producto del carrito, si es que la venta aun no se termino y se encuentra loggeado
+      operationId: eliminarDetalle
+      parameters: 
+        - name: ventaId
+          in: path
+          description: el id de la venta
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: operacion completada de forma 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VentaDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+  /marca/marca:
+    post:
+      tags: 
+        - marca
+      security: 
+        - bearerAuth: ['admin']
+      description: nueva marca
+      operationId: addMarca
+      requestBody:
+        description: dar de alta una marca 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarcaDTO'
+      responses:
+        default:
+          description: operacion completada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaDTO'
+                
+  /marca/getAllMarcas:
+    get:
+      tags:
+        - marca
+      security:
+      - bearerAuth: ['']
+      summary: dame todas las marcas
+      description: retorname el listado de marcas, si se cumple la condicion de loggeo 
+      operationId: getAllMarcas
+      responses:
+        default:
+          description: retorna todas las marcas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaListDTO'
+                
+  /marca/marca/{marcaId}:
+    get:
+      tags:
+        - marca
+      security:
+      - bearerAuth: []
+      summary: dame el producto especificado por su id
+      description: retorname la marca especificada por su id en la url
+      operationId: getMarcaById
+      parameters: 
+        - name: marcaId
+          in: path
+          description: el id de la marca
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: retorna una marca en especifico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaListDTO'
+    put:
+      tags:
+        - marca
+      security: 
+        - bearerAuth: ['admin']
+      summary: actualizacion de una marca
+      description: actualizar el nmbre de la marca, pero se necesita la autenticacion de un admin
+      operationId: updateMarca
+      parameters: 
+        - name: marcaId
+          in: path
+          description: el id de la marca
+          required: true
+          schema: 
+            type: integer
+            format: int64
+      requestBody:
+        description: objeto de tipo marca a actualizar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarcaDTO'
+      responses:
+        '200':
+          description: operacion exitosa, marca modificada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                      
+    delete:
+      tags:
+        - marca
+      security:
+        - bearerAuth: ['admin']
+      summary: eliminar marca
+      description: para eliminar una marca es condicion necesaria que este logeado y que sea un administrador
+      operationId: deleteMarca
+      parameters: 
+        - name: marcaId
+          in: path
+          description: el id de la marca
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OPERACION EXITOSA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' 
+            
+  /categoria/categoria:
+     post:
+      tags: 
+        - categoria
+      security: 
+        - bearerAuth: ['admin']
+      description: nueva categoria
+      operationId: addCategoria
+      requestBody:
+        description: dar de alta una categoria
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaDTO'
+      responses:
+        default:
+          description: operacion completada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaDTO'
+                
+  /categoria/getAllCategoria:
+     get:
+      tags:
+        - categoria
+      security:
+      - bearerAuth: ['']
+      summary: dame todas las categoria
+      description: retorname el listado de categoria, si se cumple la condicion de loggeo 
+      operationId: getAllCategoria
+      responses:
+        default:
+          description: retorna todas las categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaListDTO'
+                
+  /categoria/categoria/{categoriaId}:
+    get:
+      tags:
+        - categoria
+      security:
+      - bearerAuth: []
+      summary: dame la categoria especificado por su id
+      description: retorname la categoria especificado por su id en la url
+      operationId: getCategoriaById
+      parameters: 
+        - name: categoriaId
+          in: path
+          description: el id de la categoria
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: retorna una categoria en especifico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaListDTO'
+    put:
+      tags:
+        - categoria
+      security: 
+        - bearerAuth: ['admin']
+      summary: actualizacion de una categoria
+      description: actualizar el nombre de la categoria, pero se necesita la autenticacion de un admin
+      operationId: updateCategoria
+      parameters: 
+        - name: categoriaId
+          in: path
+          description: el id de la categoria
+          required: true
+          schema: 
+            type: integer
+            format: int64
+      requestBody:
+        description: objeto de tipo categoria a actualizar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaDTO'
+      responses:
+        '200':
+          description: operacion exitosa, categoria modificada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriaDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+                      
+    delete:
+      tags:
+        - categoria
+      security:
+        - bearerAuth: ['admin']
+      summary: eliminar categoria
+      description: para eliminar una categoria es condicion necesaria que este logeado y que sea un administrador
+      operationId: deleteCategoria
+      parameters: 
+        - name: categoriaId
+          in: path
+          description: el id de la categoria
+          
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OPERACION EXITOSA
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarcaDTO'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' 
+          
+          
+  
+components:
+  schemas:
+    
+    LoginDTO:
+      type: object
+      properties:
+        userName:
+          type: string
+          format: string
+        password:
+          type: string
+          format: password
+      required: 
+        - nombreUsuario
+        - password
+        
+  
+    CategoriaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          format: string
+          example: embutido
+          
+        padreCategoriaID:
+          type: integer
+          format: int64
+          example: 2
+      required:
+        - nombre
+        - categoriaPadre
+      xml:
+        name: categoria
+    
+    CategoriaListDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/CategoriaDTO'
+    
+    MarcaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          format: string
+          example: Lario
+          
+      required:
+        - nombre
+      xml:
+        name: marca
+    get:
+      tags:
+        - producto
+      security:
+      - bearerAuth: []
+      summary: dame el producto especificado por su id
+      description: retorname el listado de productos, solo si el usuario se encuentra logeado
+      operationId: getProductById
+      parameters: 
+        - name: productoId
+          in: path
+          description: el id del producto
+          schema:
+            type: integer
+            format: int64
+      responses:
+        default:
+          description: retorna un producto especifico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductoListDTO'
+    MarcaListDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/MarcaDTO' 
+          
+    ProductoDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          format: string
+          example: cremoso
+        precio:
+          type: integer
+          format: int64
+          example: 342
+        categoria:
+          $ref: '#/components/schemas/CategoriaDTO'
+        marca:
+          $ref: '#/components/schemas/MarcaDTO'
+      required:
+        - nombre
+        - precio
+        - categoria
+        - marca
+      xml:
+        name: producto
+        
+    ProductoListDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductoDTO'
+
+        
+    DetalleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        cantidad:
+          type: integer
+          format: int64
+          example: 1
+        producto:
+          $ref: '#/components/schemas/ProductoDTO'
+      required:
+      - cantidad
+      - producto
+      xml:
+        name: detalle
+        
+    VentaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        fecha: 
+          type: string
+          format: date
+          example: '2010-10-10'
+        productos:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetalleDTO'
+        cliente:
+          $ref: '#/components/schemas/UserDTO'
+  
+      required:
+        - fecha
+        - productos
+        - cliente
+      xml:
+        name: venta
+           
+    VentaListDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/VentaDTO'
+        
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        nombreUsuario:
+          type: string
+          format: :string
+          example: batu1234
+        nombre:
+          type: string
+          format: string
+          example: theUser
+        apellido:
+          type: string
+          format: string
+          example: John
+        email:
+          type: string
+          format: email
+          example: batubasilio@hotmail.com
+        password:
+          type: string
+          maxLength: 12
+          minLength: 6
+          example: 1234
+        fechaAlta:
+          type: string
+          format: date
+          example: '2001-07-17'
+        fechaBaja:
+          type: string 
+          format: date
+        ventas:
+          type: array
+          items:
+            $ref: '#/components/schemas/VentaDTO'
+
+      required:
+        - nombreUsuario
+        - nombre
+        - apellido  
+        - email
+        - password
+        - fechaAlta
+        - ventas
+      xml:
+        name: user
+    
+    UserRequestDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        nombreUsuario:
+          type: string
+          format: :string
+          example: batu1234
+        nombre:
+          type: string
+          format: string
+          example: theUser
+        apellido:
+          type: string
+          format: string
+          example: John
+        email:
+          type: string
+          format: email
+          example: batubasilio@hotmail.com
+        password:
+          type: string
+          maxLength: 12
+          minLength: 6
+          example: 1234
+
+      required:
+        - nombreUsuario
+        - nombre
+        - apellido  
+        - email
+        - password
+        - fechaAlta
+        - ventas
+      xml:
+        name: user
+    
+    
+    UserListDTO:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserDTO'
+        
+    DomicilioDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        calle:
+          type: string
+          format: string
+          example: '59'
+        altura:
+          type: integer
+          format: int32
+          example: '765'
+        cliente:
+          $ref: '#/components/schemas/UserDTO'
+        localidad:
+          $ref: '#/components/schemas/LocalidadDTO'
+      required: 
+        - calle
+        - altura
+        - cliente
+        - localidad
+    
+    LocalidadDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          format: string
+          example: 'chivilcoy'
+        codPostal:
+          type: integer
+          format: int64
+          example: 6640
+      required:
+        - nombre
+        - codPostal
+    
+    Provincia:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          format: string
+          example: 'cordoba'
+          
+    JWTResponseDTO:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+          
+        
+  responses:
+    UnauthorizedError:
+      description: el acceso con el token es invalido o caducado
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    
+security:
+  - bearerAuth: []
+    
