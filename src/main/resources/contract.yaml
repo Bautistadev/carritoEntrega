@@ -758,6 +758,15 @@ components:
         - nombreUsuario
         - password
         
+    TokenDTO:
+      type: object
+      properties:
+        token:
+          type: string
+          format: string
+      required:
+        - token
+        
   
     CategoriaDTO:
       type: object
@@ -802,28 +811,7 @@ components:
         - nombre
       xml:
         name: marca
-    get:
-      tags:
-        - producto
-      security:
-      - bearerAuth: []
-      summary: dame el producto especificado por su id
-      description: retorname el listado de productos, solo si el usuario se encuentra logeado
-      operationId: getProductById
-      parameters: 
-        - name: productoId
-          in: path
-          description: el id del producto
-          schema:
-            type: integer
-            format: int64
-      responses:
-        default:
-          description: retorna un producto especifico
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProductoListDTO'
+    
     MarcaListDTO:
       type: array
       items:
@@ -1085,4 +1073,3 @@ components:
     
 security:
   - bearerAuth: []
-    

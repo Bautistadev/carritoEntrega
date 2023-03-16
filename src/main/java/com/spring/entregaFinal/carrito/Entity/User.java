@@ -1,14 +1,25 @@
 package com.spring.entregaFinal.carrito.Entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.NaturalId;
+
+import com.spring.entregaFinal.carrito.enums.*;
 
 
 @Entity
@@ -19,7 +30,8 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "userName",nullable = false)
+	@NaturalId
+	@Column(name = "userName",unique = true,nullable = false)
 	private String userName;
 	
 	@Column(name = "nombre", nullable = false)
@@ -37,8 +49,14 @@ public class User {
 	@Column(name = "fechaAlta",nullable = false)
 	private String fechaAlta;
 	
-	@Column(name = "fechaBaja",nullable = false)
+	@Column(name = "fechaBaja",nullable = true)
 	private String fechaBaja;
+	
+    @NotNull
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="user_role_relate", joinColumns = @JoinColumn(name="user_id"),
+     inverseJoinColumns=@JoinColumn(name="role_id"))
+    private Set<Role> roles = new HashSet<>();
 	
 	@OneToMany(mappedBy = "user")
 	private List<Venta> ventas;
@@ -47,23 +65,23 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private List<Domicilio> domicilios;
 
-	public User(Long id, String userName, String nombre, String apellido, String email, String password,
-			String fechaAlta, String fechaBaja) {
+	public User(String userName, String nombre, String apellido, String email, String password,
+			String fechaAlta) {
 		super();
-		this.id = id;
 		this.userName = userName;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.email = email;
 		this.password = password;
 		this.fechaAlta = fechaAlta;
-		this.fechaBaja = fechaBaja;
+		
 	}
 	
 	
 	public User() {
 		
 	}
+	
 
 
 	public Long getId() {
@@ -164,6 +182,16 @@ public class User {
 
 	public void setDomicilios(List<Domicilio> domicilios) {
 		this.domicilios = domicilios;
+	}
+
+	
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
 
