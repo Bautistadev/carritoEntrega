@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,17 +59,17 @@ public class MarcaController {
 	
 	//ACTUALIZACION
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@PostMapping("/updateMarca")
+	@PutMapping("/updateMarca")
 	public ResponseEntity<Object>updateMarca(@Valid @RequestBody Marca marca) {
 		//System.out.println(marca.getId());
-		marcaServices.updateMarca(marca);
+		marcaServices.saveActualizar(marca);
 		return new ResponseEntity<>(new Message("Actualizacion exitosa"),HttpStatus.CREATED);
 	}
 	
 	
 	//ELIMINACION
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@PostMapping("/remove")
+	@DeleteMapping("/remove")
 	public ResponseEntity<Object>removeMarca(@Valid @RequestBody Marca marca){
 		if(marcaServices.removeMarca(marca))
 			return new ResponseEntity<>(new Message("La marca fue eliminada de forma correcta"),HttpStatus.OK);

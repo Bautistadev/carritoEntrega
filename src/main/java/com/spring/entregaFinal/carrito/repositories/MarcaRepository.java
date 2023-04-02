@@ -19,9 +19,6 @@ public interface MarcaRepository extends JpaRepository<Marca, Long>{
 	@Query(value = "SELECT c FROM Marca c where c.nombre like ?1%")
 	List<Marca> findByWordName(String word);
 	
-	@Modifying
-	@Query(value = "update Marca set nombre = ?2 where id = ?1")
-	void updateMarca(Long id, String nombre);
 	
 	
 	

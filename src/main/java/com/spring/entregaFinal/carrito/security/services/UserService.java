@@ -1,5 +1,6 @@
 package com.spring.entregaFinal.carrito.security.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,20 @@ public class UserService {
         userRepository.save(user);
     }
     
+    public void bajar(User user){
+       	
+    	user.setFechaBaja(LocalDateTime.now().toString());
+    	user.setPassword(userRepository.findByUserName(user.getUserName()).get().getPassword());
+    	
+        userRepository.save(user);
+    }
+    
     public List<User> getAllUsers(){
     	return userRepository.findAll();
     }
+  
+    public List<User> findPalabraClave(String palabra){
+    	return userRepository.findPalabraClave(palabra);
+    }
+    
 }

@@ -24,7 +24,7 @@ public class CategoriaService {
 	public Categoria save(CategoriaDTO categoriaDTO){
 		 Categoria categoria = new Categoria();
 		 
-		 categoria.setNombre(categoriaDTO.getNombre());
+		 categoria.setNombre(categoriaDTO.getNombre().toUpperCase());
 		 
 		 if(categoriaDTO.getPadreCategoria() != null)
 			 categoria.setPadreCategoria(categoriaDTO.getPadreCategoria());
@@ -46,4 +46,27 @@ public class CategoriaService {
 		categoriaRepository.deleteById(categoria.getId());
 		return true;
 	}
+	
+	public boolean saveActualizar(Categoria categoria) {
+		if(categoria == null)
+			return false;
+		categoriaRepository.save(categoria);
+		return true;
+	}
+	
+	public List<Categoria>getChild(Long id){
+		return categoriaRepository.ListChild(id);
+	}
+
+	public List<Categoria>getByWordName(String word){
+		return categoriaRepository.findByWordName(word);
+	}
+	
+	public Categoria getByNombre(String nombre) {
+		return categoriaRepository.findByNombre(nombre);
+	}
+
+
 }
+
+

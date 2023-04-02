@@ -1,5 +1,6 @@
 package com.spring.entregaFinal.carrito.security.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -24,6 +25,8 @@ public class RoleService {
     public Optional<Role> getByRoleName(RoleList roleName){
         return roleRepository.findByRoleName(roleName);
     }
-    
+    public List<Role>getAllRoles(){
+    	return roleRepository.findAll();
+    }
     
 }

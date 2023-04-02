@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "categorias")
 public class Categoria {
 	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -25,7 +26,6 @@ public class Categoria {
 	@Column(name = "nombre",nullable = false)
 	private String nombre;
 	
-	//@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "padreId")
 	private Categoria padreCategoria;
@@ -44,6 +44,12 @@ public class Categoria {
 		this.nombre = nombre;
 		this.padreCategoria = padreCategoria;
 		this.hijos = hijos;
+	}
+	
+	public Categoria(Long id, String nombre) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
 	}
 	
 	public Categoria() {
@@ -85,7 +91,7 @@ public class Categoria {
 	@Override
 	public String toString() {
 		return "Categoria [id=" + id + ", nombre=" + nombre 
-				+ "padreCategoria= "+this.padreCategoria+""+"]";
+				+ "padreCategoria= "+"]";
 	}
 	
 }

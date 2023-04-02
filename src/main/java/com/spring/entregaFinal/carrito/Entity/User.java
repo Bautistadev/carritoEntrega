@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NaturalId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.entregaFinal.carrito.enums.*;
 
 
@@ -58,6 +59,7 @@ public class User {
      inverseJoinColumns=@JoinColumn(name="role_id"))
     private Set<Role> roles = new HashSet<>();
 	
+    @JsonIgnore
 	@OneToMany(mappedBy = "user")
 	private List<Venta> ventas;
 	

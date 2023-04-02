@@ -31,7 +31,7 @@ public class MarcaServices {
 		Marca marca = new Marca();
 		
 		marca.setId(marcaRepository.findById(id).get().getId());
-		marca.setNombre(marcaRepository.findById(id).get().getNombre());
+		marca.setNombre(marcaRepository.findById(id).get().getNombre().toUpperCase());
 		marca.setProductos(marcaRepository.findById(id).get().getProductos());
 		
 		
@@ -43,6 +43,10 @@ public class MarcaServices {
 		Marca marca = new Marca();
 		marca.setNombre(marcaDTO.getNombre().toUpperCase());
 		
+		return this.marcaRepository.save(marca);
+	}
+	
+	public Marca saveActualizar(Marca marca) {		
 		return this.marcaRepository.save(marca);
 	}
 	
@@ -68,8 +72,4 @@ public class MarcaServices {
 	}
 	
 	
-	public void updateMarca(Marca marca) {
-		marcaRepository.updateMarca(marca.getId(), marca.getNombre());
-	}
-
 }

@@ -1,5 +1,7 @@
 package com.spring.entregaFinal.carrito;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.boot.SpringApplication;
@@ -15,6 +17,7 @@ import com.spring.entregaFinal.carrito.Entity.User;
 import com.spring.entregaFinal.carrito.repositories.CategoriaRepository;
 import com.spring.entregaFinal.carrito.repositories.MarcaRepository;
 import com.spring.entregaFinal.carrito.repositories.ProductoRepository;
+import com.spring.entregaFinal.carrito.security.services.RoleService;
 import com.spring.entregaFinal.carrito.security.services.UserService;
 import com.spring.entregaFinal.carrito.services.MarcaServices;
 
@@ -26,7 +29,7 @@ public class CarritoApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(CarritoApplication.class, args);
 		
-		
+		System.out.println(ctx.getBean(UserService.class).findPalabraClave("ad"));
 	}
 
 }

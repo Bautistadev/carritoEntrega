@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "productos")
 public class Producto {
@@ -23,12 +25,12 @@ public class Producto {
 	@Column(name = "precio",nullable = false)
 	private Float precio;
 	
-	
+	//@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "categoriaId")
 	private Categoria categoria;
 	
-	
+	//@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "marcaId")
 	private Marca marca;
@@ -46,6 +48,17 @@ public class Producto {
 
 	public Producto() {
 		super();
+	}
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 

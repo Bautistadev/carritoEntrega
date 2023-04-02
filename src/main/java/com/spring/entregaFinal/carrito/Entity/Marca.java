@@ -11,9 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "marcas")
-public class Marca implements Serializable {
+public class Marca  {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +24,15 @@ public class Marca implements Serializable {
 	@Column(name = "nombre",nullable = false)
 	private String nombre;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "marca")
 	private List<Producto> productos;
 
-	public Marca(Long id,String nombre) {
+	public Marca(Long id,String nombre,List<Producto>productos) {
 		super();
 		this.nombre = nombre;
 		this.id = id;
+		this.productos = productos;
 	}
 
 	public Marca() {
